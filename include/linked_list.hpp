@@ -3,51 +3,44 @@
 // I figured that the snake is actually a linked list.
 // Well, I could definitely use std::deque for this but
 // I'm bored, and severely autistic
-#include <cstdlib>
+#include <stdlib.h>
 #include <raylib.h>
 #include <stdint.h>
 
 class SnakeSegment {
 	public:
+	SnakeSegment *next;
 	Rectangle rect;
 	SnakeSegment(Rectangle rect) {
 		this->rect = rect;
 	}
 };
 
-class Node {
+class Snake {
 	public:
-	Node *next;
-	SnakeSegment *snake_segment;
-};
-
-class LinkedList {
-	public:
-	Node *head;
-	Node *tail;
+	SnakeSegment *head;
+	SnakeSegment *tail;
 	size_t size = 0;
 
-	~LinkedList() {
-		Node *curr = this->head;
-		Node *old_curr = curr;
+	~Snake() {
+		SnakeSegment *curr = this->head;
+		SnakeSegment *old_curr;
 		for (size_t i = 0; i < this->size; i++) {
 			old_curr = curr;
-			delete curr->snake_segment;
 			curr = curr->next;
 			delete old_curr;
 		}
 	}
 
-	void append(SnakeSegment *snake_segment) {
-		Node *new_node = new Node();
-		new_node->snake_segment = snake_segment;
+	void append(Rectangle rect) {
+		SnakeSegment *new_node = new SnakeSegment(rect);
 		if (this->size == 0) {
 			this->head = new_node;
 			this->tail = new_node;
 			this->size++;
 			return;
 		}
-		Node *old_tail = this->tail;
+		SnakeSegment *old_tail = this->tail;
 		this->tail = new_node;
 		old_tail->next = new_node;
 		this->size++;
