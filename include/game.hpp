@@ -40,7 +40,7 @@ class GameUI {
 class Game {
 	public:
 	GameUI *game_ui;
-	int score;
+	int score = 0;
 	bool paused = true;
 	bool food_eaten = false;
 	~Game() {
@@ -49,7 +49,7 @@ class Game {
 		delete this->game_ui;
 	}
 
-	Rectangle *spawn_food(Vector2 center) {
+	Rectangle *spawn_food() {
 		int row = GetRandomValue(1, MAP_ROWS);
 		int col = GetRandomValue(1, MAP_COLS);
 		Vector2 grid_pos_to_pixel = {row * MAP_CELL_SIZE - MAP_CELL_SIZE, col * MAP_CELL_SIZE - MAP_CELL_SIZE};

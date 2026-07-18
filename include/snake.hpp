@@ -26,15 +26,13 @@ class Snake {
 	public:
 	SnakeSegment *head;
 	SnakeSegment *tail;
-	Vector2 dir = {1, 0};
+	Vector2 dir = {0, 0};
+	Vector2 next_dir = {0, 0};
 	size_t size = 0;
-	float moveTimer = 0.0f;
-    float moveInterval = 0.15f;
-
-	// Snake(SnakeSegment *head) {
-	// 	this->head = head;
-	// 	this->tail = this->head;
-	// }
+	double last_update_time = 0.0;
+	float move_timer = 0.0f;
+    float move_interval = 0.15f;
+	bool allow_move = false;
 
 	~Snake() {
 		SnakeSegment *curr = this->head;
@@ -48,10 +46,10 @@ class Snake {
 
 	void update() {
         float dt = GetFrameTime();
-        moveTimer += dt;
+        move_timer += dt;
 
-        if (moveTimer >= moveInterval) {
-            moveTimer -= moveInterval;
+        if (move_timer >= move_interval) {
+            move_timer -= move_interval;
             this->move();
         }
     }
@@ -73,29 +71,29 @@ class Snake {
 
 	void change_dir() {
 		if (IsKeyPressed(KEY_UP) && this->dir != (Vector2){0, 1}) {
-			this->dir = {0, -1};
+			this->next_dir = {0, -1};
 		} else if (IsKeyPressed(KEY_LEFT) && this->dir != (Vector2){1, 0}) {
-			this->dir = {-1, 0};
+			this->next_dir = {-1, 0};
 		} else if (IsKeyPressed(KEY_DOWN) && this->dir != (Vector2){0, -1}) {
-			this->dir = {0, 1};
+			this->next_dir = {0, 1};
 		} else if (IsKeyPressed(KEY_RIGHT) && this->dir != (Vector2){-1, 0}) {
-			this->dir = {1, 0};
-		} else if (IsKeyPressed(KEY_SPACE)) {
-			this->dir = {0, 0};
+			this->next_dir = {1, 0};
 		}
+		allow_move = true;
 	}
-
+	
 	void move() {
 		SnakeSegment *curr = this->head;
 		Vector2 old_curr_pos = curr->pos;
 		Vector2 old_next_pos;
+		this->dir = this->next_dir;
 		this->head->pos.x += this->dir.x * MAP_CELL_SIZE;
 		this->head->pos.y += this->dir.y * MAP_CELL_SIZE;
 
-		for (size_t i = 0; i < this->size; i++) {
-			if (curr->next == nullptr) {
-				break;
-			}
+		for (size_t i = 0; i < this->size - 1; i++) {
+			// if (curr->next == nullptr) {
+			// 	break;
+			// }
 			old_next_pos = curr->next->pos;
 			curr->next->pos = old_curr_pos;
 			curr = curr->next;
@@ -129,6 +127,16 @@ class Snake {
 
 	bool is_food_eaten(Rectangle *food) {
 		if (this->head->pos.x + 5 == food->x && this->head->pos.y + 5 == food->y) {
+			return true;
+		}
+		return false;
+	}
+
+	bool snake_bounds_check() {
+		if (this->head->pos.x + 5 <= BORDER_POS.x ||
+				this->head->pos.x >= BORDER_POS.x + BORDER_WIDTH ||
+				this->head->pos.y + 5 <= BORDER_POS.y ||
+				this->head->pos.y >= BORDER_HEIGHT + MAP_CELL_SIZE) {
 			return true;
 		}
 		return false;

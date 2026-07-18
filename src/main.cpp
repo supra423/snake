@@ -60,33 +60,45 @@ int main() {
 	snake->append();
 	Rectangle *food;
 	game->food_eaten = true;
+	game->game_ui->score_pos = {BORDER_POS.x, BORDER_POS.y + BORDER_HEIGHT};
+	std::string score_string;
 
 	while (WindowShouldClose() == false) {
 		BeginDrawing();
 		ClearBackground(BLACK);
 		center = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
+		Vector2 score_pos = Vector2Add(DYNAMIC_OFFSET, game->game_ui->score_pos);
 		border_pos = Vector2Add(DYNAMIC_OFFSET, border->pos);
+		score_string = std::to_string(game->score);
 		if (game->food_eaten) {
-			food = game->spawn_food(center);
+			food = game->spawn_food();
 			game->food_eaten = false;
 		}
 		draw_map(border_pos, map->cell_size);
 		DrawRectangleLinesEx({border_pos.x - border->thickness - BORDER_OFFSET, border_pos.y - border->thickness - BORDER_OFFSET, border->width + border->thickness + BORDER_OFFSET, border->height + border->thickness + BORDER_OFFSET}, border->thickness, GREEN);
-		if (!game->food_eaten) {
-			DrawRectangle(food->x + DYNAMIC_OFFSET.x, food->y + DYNAMIC_OFFSET.y, food->width, food->height, RED);
+		DrawText(score_string.c_str(), score_pos.x, score_pos.y, 50, GREEN);
+		if (!game->food_eaten) DrawRectangle(food->x + DYNAMIC_OFFSET.x, food->y + DYNAMIC_OFFSET.y, food->width, food->height, RED);
+		if (snake->is_food_eaten(food)) {
+			game->food_eaten = true;
+			snake->append();
+			game->score++;
+			delete food;
+		}
+
+		if (snake->snake_bounds_check())  {
+			delete snake;
+			snake = new Snake;
+			snake->append();
+			game->score = 0;
 		}
 		snake->change_dir();
 		snake->update();
 		snake->draw(center);
-		std::cout << snake->size << std::endl;
-		if (snake->is_food_eaten(food)) {
-			game->food_eaten = true;
-			snake->append();
-			delete food;
-		}
 		EndDrawing();
 	}
 	CloseWindow();
 	delete game;
+	delete food;
+	delete snake;
 	return 0;
 }
