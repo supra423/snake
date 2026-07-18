@@ -37,7 +37,7 @@ class Snake {
 	~Snake() {
 		SnakeSegment *curr = this->head;
 		SnakeSegment *old_curr;
-		for (size_t i = 0; i < this->size; i++) {
+		while (curr != nullptr) {
 			old_curr = curr;
 			curr = curr->next;
 			delete old_curr;
@@ -56,6 +56,7 @@ class Snake {
 
 	void append() {
 		SnakeSegment *new_segment = new SnakeSegment;
+		new_segment->next = nullptr;
 		if (this->size == 0) {
 			new_segment->pos = SNAKE_STARTING_POSITION;
 			this->head = new_segment;
@@ -63,6 +64,7 @@ class Snake {
 			this->size++;
 			return;
 		}
+		new_segment->pos = this->tail->pos;
 		SnakeSegment *old_tail = this->tail;
 		this->tail = new_segment;
 		old_tail->next = new_segment;
@@ -90,10 +92,10 @@ class Snake {
 		this->head->pos.x += this->dir.x * MAP_CELL_SIZE;
 		this->head->pos.y += this->dir.y * MAP_CELL_SIZE;
 
-		for (size_t i = 0; i < this->size - 1; i++) {
-			// if (curr->next == nullptr) {
-			// 	break;
-			// }
+		while (curr != nullptr) {
+			if (curr->next == nullptr) {
+				return;
+			}
 			old_next_pos = curr->next->pos;
 			curr->next->pos = old_curr_pos;
 			curr = curr->next;
@@ -104,9 +106,8 @@ class Snake {
 	void draw(Vector2 center) {
 		Vector2 pos_in_grid;
 		SnakeSegment *curr = this->head;
-		std::string text;
 
-		for (size_t i = 0; i < this->size; i++) {
+		while (curr != nullptr) {
 			int pos_in_grid_x = floor(((curr->pos.x - BORDER_POS.x) / MAP_CELL_SIZE));
 			int pos_in_grid_y = floor(((curr->pos.y - BORDER_POS.y) / MAP_CELL_SIZE));
 

@@ -35,6 +35,10 @@ class GameUI {
 	Border *border;
 	Map *map;
 	Vector2 score_pos;
+	~GameUI() {
+		delete border;
+		delete map;
+	}
 };
 
 class Game {
@@ -44,8 +48,6 @@ class Game {
 	bool paused = true;
 	bool food_eaten = false;
 	~Game() {
-		delete this->game_ui->border;
-		delete this->game_ui->map;
 		delete this->game_ui;
 	}
 

@@ -84,7 +84,6 @@ int main() {
 			game->score++;
 			delete food;
 		}
-
 		if (snake->snake_bounds_check())  {
 			delete snake;
 			snake = new Snake;
@@ -96,9 +95,9 @@ int main() {
 		snake->draw(center);
 		EndDrawing();
 	}
-	CloseWindow();
 	delete game;
 	delete food;
 	delete snake;
+	CloseWindow();
 	return 0;
 }
