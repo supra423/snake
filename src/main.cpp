@@ -58,8 +58,8 @@ int main() {
 	Map *map = game->game_ui->map;
 	Snake *snake = new Snake;
 	snake->append();
-	Rectangle *food;
-	game->food_eaten = true;
+	Rectangle *food = game->spawn_food();
+	game->food_eaten = false;
 	game->game_ui->score_pos = {BORDER_POS.x, BORDER_POS.y + BORDER_HEIGHT};
 	std::string score_string;
 
