@@ -22,16 +22,16 @@ CC := g++
 EXTENSION := cpp
 
 # flags
-CFLAGS_DEBUG := -Iinclude -Wall -Wextra -Winline -g
-CFLAGS_RELEASE := -Iinclude -O2 -Wall -Wextra -Winline  -pipe
-CFLAGS_MAX := -Iinclude -march=native -mtune=native -Wall -Wextra -Winline  -O2 -fomit-frame-pointer    -fno-plt -pipe
+CFLAGS_DEBUG := -Iinclude -Wall -Wextra -Winline -g $(PKG_CFLAGS)
+CFLAGS_RELEASE := -Iinclude -O2 -Wall -Wextra -Winline  -pipe $(PKG_CFLAGS)
+CFLAGS_MAX := -Iinclude -march=native -mtune=native -Wall -Wextra -Winline  -O2 -fomit-frame-pointer    -fno-plt -pipe $(PKG_CFLAGS)
 
-LDFLAGS_DEBUG := 
-LDFLAGS_RELEASE := 
-LDFLAGS_MAX := 
+LDFLAGS_DEBUG := $(PKG_LIBS) -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+LDFLAGS_RELEASE := $(PKG_LIBS) -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+LDFLAGS_MAX := $(PKG_LIBS) -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
-# PKG_CFLAGS := $(shell pkg-config --cflags libfoo)
-# PKG_LIBS := $(shell pkg-config --libs libfoo)
+PKG_CFLAGS := $(shell pkg-config --cflags raylib)
+PKG_LIBS := $(shell pkg-config --libs raylib)
 
 SRCS := $(wildcard $(SRC_DIR)/*.$(EXTENSION))
 
