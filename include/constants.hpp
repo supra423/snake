@@ -6,7 +6,7 @@
 #define FPS 60
 
 #define BORDER_POS (Vector2){200.0, 50.0}
-#define BORDER_THICKNESS 5
+#define BORDER_THICKNESS 1
 #define BORDER_WIDTH 800.0f
 #define BORDER_HEIGHT 800.0f
 
@@ -24,4 +24,6 @@
 #define SNAKE_SEGMENT_SIZE 20.0f
 
 #define SNAKE_STARTING_POSITION (Vector2){BORDER_POS.x + 360, BORDER_POS.y + 360}
+
+#define MOVE_INTERNAL 0.15f
 #endif

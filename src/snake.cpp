@@ -1,4 +1,7 @@
 #include "snake.hpp"
+#include "constants.hpp"
+#include <raylib.h>
+#include <raymath.h>
 
 SnakeSegment::SnakeSegment() {}
 
@@ -16,8 +19,8 @@ void Snake::update() {
 	float dt = GetFrameTime();
 	move_timer += dt;
 
-	if (move_timer >= move_interval) {
-		move_timer -= move_interval;
+	if (move_timer >= MOVE_INTERNAL) {
+		move_timer -= MOVE_INTERNAL;
 		this->move();
 	}
 }
@@ -40,13 +43,13 @@ void Snake::append() {
 }
 
 void Snake::change_dir() {
-	if (IsKeyPressed(KEY_UP) && this->dir != (Vector2){0, 1}) {
+	if ((IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_K)) && this->dir != (Vector2){0, 1}) {
 		this->next_dir = {0, -1};
-	} else if (IsKeyPressed(KEY_LEFT) && this->dir != (Vector2){1, 0}) {
+	} else if ((IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_H)) && this->dir != (Vector2){1, 0}) {
 		this->next_dir = {-1, 0};
-	} else if (IsKeyPressed(KEY_DOWN) && this->dir != (Vector2){0, -1}) {
+	} else if ((IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_J)) && this->dir != (Vector2){0, -1}) {
 		this->next_dir = {0, 1};
-	} else if (IsKeyPressed(KEY_RIGHT) && this->dir != (Vector2){-1, 0}) {
+	} else if ((IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_L)) && this->dir != (Vector2){-1, 0}) {
 		this->next_dir = {1, 0};
 	}
 	allow_move = true;
@@ -74,21 +77,37 @@ void Snake::move() {
 void Snake::draw(Vector2 center) {
 	Vector2 pos_in_grid;
 	SnakeSegment *curr = this->head;
+	if (this->snake_bounds_check()) {
+		return;
+	}
+	int pos_in_grid_x = floor(((curr->pos.x - BORDER_POS.x) / MAP_CELL_SIZE));
+	int pos_in_grid_y = floor(((curr->pos.y - BORDER_POS.y) / MAP_CELL_SIZE));
+
+	pos_in_grid = {(float)pos_in_grid_x, (float)pos_in_grid_y};
+
+	Vector2 pos_back_to_pixels;
+	float pos_back_to_pixels_x = pos_in_grid_x * MAP_CELL_SIZE;
+	float pos_back_to_pixels_y = pos_in_grid_y * MAP_CELL_SIZE;
+	pos_back_to_pixels = {pos_back_to_pixels_x, pos_back_to_pixels_y};
+
+	Vector2 segment_pos = Vector2Add(DYNAMIC_OFFSET, pos_back_to_pixels);
+	Vector2 rectangle_pos = Vector2Add(Vector2Add(segment_pos, BORDER_POS), {BORDER_OFFSET + 1, BORDER_OFFSET + 1});
+	DrawRectangleV(rectangle_pos, {SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE}, GREEN);
+	curr = curr->next;
 
 	while (curr != nullptr) {
-		int pos_in_grid_x = floor(((curr->pos.x - BORDER_POS.x) / MAP_CELL_SIZE));
-		int pos_in_grid_y = floor(((curr->pos.y - BORDER_POS.y) / MAP_CELL_SIZE));
+		pos_in_grid_x = floor(((curr->pos.x - BORDER_POS.x) / MAP_CELL_SIZE));
+		pos_in_grid_y = floor(((curr->pos.y - BORDER_POS.y) / MAP_CELL_SIZE));
 
 		pos_in_grid = {(float)pos_in_grid_x, (float)pos_in_grid_y};
 
-		Vector2 pos_back_to_pixels;
-		float pos_back_to_pixels_x = pos_in_grid_x * MAP_CELL_SIZE;
-		float pos_back_to_pixels_y = pos_in_grid_y * MAP_CELL_SIZE;
+		pos_back_to_pixels_x = pos_in_grid_x * MAP_CELL_SIZE;
+		pos_back_to_pixels_y = pos_in_grid_y * MAP_CELL_SIZE;
 		pos_back_to_pixels = {pos_back_to_pixels_x, pos_back_to_pixels_y};
 
-		Vector2 segment_pos = Vector2Add(DYNAMIC_OFFSET, pos_back_to_pixels);
-		Vector2 rectangle_pos = Vector2Add(Vector2Add(segment_pos, BORDER_POS), {BORDER_OFFSET + 1, BORDER_OFFSET + 1});
-		DrawRectangleV(rectangle_pos, {SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE}, GREEN);
+		segment_pos = Vector2Add(DYNAMIC_OFFSET, pos_back_to_pixels);
+		rectangle_pos = Vector2Add(Vector2Add(segment_pos, BORDER_POS), {BORDER_OFFSET + 1, BORDER_OFFSET + 1});
+		DrawRectangleV(rectangle_pos, {SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE}, DARKGREEN);
 
 		curr = curr->next;
 	}
@@ -107,6 +126,21 @@ bool Snake::snake_bounds_check() {
 			this->head->pos.y + 5 <= BORDER_POS.y ||
 			this->head->pos.y >= BORDER_HEIGHT + MAP_CELL_SIZE) {
 		return true;
+	}
+	return false;
+}
+
+bool Snake::snake_self_collision() {
+	if (this->size <= 2) {
+		return false;
+	}
+	SnakeSegment *curr = this->head;
+	while (curr != nullptr) {
+		if (curr->next == nullptr) return false;
+		if (this->head->pos == curr->next->pos) {
+			return true;
+		}
+		curr = curr->next;
 	}
 	return false;
 }

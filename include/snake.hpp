@@ -4,12 +4,7 @@
 // Well, I could definitely use std::deque for this but
 // I'm bored, and severely autistic
 #include <raylib.h>
-#include <raymath.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include "constants.hpp"
-#include <iostream>
-#include <string>
 
 class SnakeSegment {
 	public:
@@ -30,7 +25,6 @@ class Snake {
 	size_t size = 0;
 	double last_update_time = 0.0;
 	float move_timer = 0.0f;
-    float move_interval = 0.15f;
 	bool allow_move = false;
 
 	~Snake();
@@ -41,5 +35,6 @@ class Snake {
 	void draw(Vector2 center);
 	bool is_food_eaten(Rectangle *food);
 	bool snake_bounds_check();
+	bool snake_self_collision();
 };
 #endif

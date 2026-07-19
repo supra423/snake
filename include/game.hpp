@@ -1,8 +1,7 @@
 #ifndef GAME_HPP
 #define GAME_HPP
-#include "constants.hpp"
 #include <raylib.h>
-#include <raymath.h>
+#include "snake.hpp"
 
 class Border {
 	public:
@@ -40,6 +39,6 @@ class Game {
 	bool paused = true;
 	bool food_eaten = false;
 	~Game();
-	Rectangle *spawn_food();
+	Rectangle *spawn_food(SnakeSegment *snake_segment);
 };
 #endif
