@@ -26,9 +26,9 @@ CFLAGS_DEBUG := -Iinclude -Wall -Wextra -Winline -g $(PKG_CFLAGS)
 CFLAGS_RELEASE := -Iinclude -O2 -Wall -Wextra -Winline  -pipe $(PKG_CFLAGS)
 CFLAGS_MAX := -Iinclude -march=native -mtune=native -Wall -Wextra -Winline  -O2 -fomit-frame-pointer    -fno-plt -pipe $(PKG_CFLAGS)
 
-LDFLAGS_DEBUG := $(PKG_LIBS) -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
-LDFLAGS_RELEASE := $(PKG_LIBS) -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
-LDFLAGS_MAX := $(PKG_LIBS) -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+LDFLAGS_DEBUG := $(PKG_LIBS) -lraylib -lGL -lm -lpthread -ldl -lrt
+LDFLAGS_RELEASE := $(PKG_LIBS) -lraylib -lGL -lm -lpthread -ldl -lrt
+LDFLAGS_MAX := $(PKG_LIBS) -lraylib -lGL -lm -lpthread -ldl -lrt
 
 PKG_CFLAGS := $(shell pkg-config --cflags raylib)
 PKG_LIBS := $(shell pkg-config --libs raylib)

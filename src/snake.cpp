@@ -52,7 +52,6 @@ void Snake::change_dir() {
 	} else if ((IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_L)) && this->dir != (Vector2){-1, 0}) {
 		this->next_dir = {1, 0};
 	}
-	allow_move = true;
 }
 
 void Snake::move() {
@@ -90,7 +89,7 @@ void Snake::draw(Vector2 center) {
 	float pos_back_to_pixels_y = pos_in_grid_y * MAP_CELL_SIZE;
 	pos_back_to_pixels = {pos_back_to_pixels_x, pos_back_to_pixels_y};
 
-	Vector2 segment_pos = Vector2Add(DYNAMIC_OFFSET, pos_back_to_pixels);
+	Vector2 segment_pos = Vector2Add(DYNAMIC_OFFSET(center), pos_back_to_pixels);
 	Vector2 rectangle_pos = Vector2Add(Vector2Add(segment_pos, BORDER_POS), {BORDER_OFFSET + 1, BORDER_OFFSET + 1});
 	DrawRectangleV(rectangle_pos, {SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE}, GREEN);
 	curr = curr->next;
@@ -105,7 +104,7 @@ void Snake::draw(Vector2 center) {
 		pos_back_to_pixels_y = pos_in_grid_y * MAP_CELL_SIZE;
 		pos_back_to_pixels = {pos_back_to_pixels_x, pos_back_to_pixels_y};
 
-		segment_pos = Vector2Add(DYNAMIC_OFFSET, pos_back_to_pixels);
+		segment_pos = Vector2Add(DYNAMIC_OFFSET(center), pos_back_to_pixels);
 		rectangle_pos = Vector2Add(Vector2Add(segment_pos, BORDER_POS), {BORDER_OFFSET + 1, BORDER_OFFSET + 1});
 		DrawRectangleV(rectangle_pos, {SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE}, DARKGREEN);
 

@@ -25,7 +25,6 @@ class Snake {
 	size_t size = 0;
 	double last_update_time = 0.0;
 	float move_timer = 0.0f;
-	bool allow_move = false;
 
 	~Snake();
 	void update();

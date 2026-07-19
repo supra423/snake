@@ -19,9 +19,9 @@ Game::~Game() {
 }
 
 Rectangle *Game::spawn_food(SnakeSegment *snake_segment) {
-	int row = GetRandomValue(1, MAP_ROWS);
-	int col = GetRandomValue(1, MAP_COLS);
-	Vector2 grid_pos_to_pixel = {row * MAP_CELL_SIZE - MAP_CELL_SIZE, col * MAP_CELL_SIZE - MAP_CELL_SIZE};
+	int row = GetRandomValue(1, ROWS);
+	int col = GetRandomValue(1, COLS);
+	Vector2 grid_pos_to_pixel = {row * (float)MAP_CELL_SIZE - (float)MAP_CELL_SIZE, col * (float)MAP_CELL_SIZE - (float)MAP_CELL_SIZE};
 	Vector2 offset_pos = Vector2Add(Vector2Add(grid_pos_to_pixel, BORDER_POS), {BORDER_OFFSET + 1, BORDER_OFFSET + 1});
 	SnakeSegment *curr = snake_segment;
 	Rectangle *food;
@@ -30,13 +30,13 @@ Rectangle *Game::spawn_food(SnakeSegment *snake_segment) {
 			break;
 		}
 		if (offset_pos == (Vector2){curr->pos.x + 5, curr->pos.y + 5}) {
-			row = GetRandomValue(1, MAP_ROWS);
-			col = GetRandomValue(1, MAP_COLS);
-			grid_pos_to_pixel = {row * MAP_CELL_SIZE - MAP_CELL_SIZE, col * MAP_CELL_SIZE - MAP_CELL_SIZE};
+			row = GetRandomValue(1, ROWS);
+			col = GetRandomValue(1, COLS);
+			grid_pos_to_pixel = {row * (float)MAP_CELL_SIZE - (float)MAP_CELL_SIZE, col * (float)MAP_CELL_SIZE - (float)MAP_CELL_SIZE};
 			offset_pos = Vector2Add(Vector2Add(grid_pos_to_pixel, BORDER_POS), {BORDER_OFFSET + 1, BORDER_OFFSET + 1});
 		}
 		curr = curr->next;
 	}
-	food = new Rectangle({offset_pos.x, offset_pos.y, 20, 20});
+	food = new Rectangle({offset_pos.x, offset_pos.y, SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE});
 	return food;
 }
