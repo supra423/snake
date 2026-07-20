@@ -32,7 +32,7 @@ class Snake {
 	void change_dir();
 	void move();
 	void draw(Vector2 center);
-	bool is_food_eaten(Rectangle *food);
+	bool food_collision_check(Rectangle *food);
 	bool snake_bounds_check();
 	bool snake_self_collision();
 };

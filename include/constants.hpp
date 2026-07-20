@@ -17,7 +17,7 @@ constexpr Vector2 BORDER_POS = (Vector2){(DEFAULT_WINDOW_WIDTH - BORDER_WIDTH) /
 constexpr int MAP_CELL_SIZE = ((BORDER_WIDTH / ROWS) + (BORDER_HEIGHT / COLS)) / 2;
 #define INNER_CELL_SIZE 32.0f
 
-#define BORDER_OFFSET 4.0f
+#define BORDER_OFFSET 10.0f
 
 #define CELL_CORNER_LINE_LENGTH 6.0f
 

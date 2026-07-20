@@ -39,6 +39,6 @@ class Game {
 	bool paused = true;
 	bool food_eaten = false;
 	~Game();
-	Rectangle *spawn_food(SnakeSegment *snake_segment);
+	Rectangle *spawn_food(Snake *snake);
 };
 #endif

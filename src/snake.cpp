@@ -74,56 +74,36 @@ void Snake::move() {
 }
 
 void Snake::draw(Vector2 center) {
-	Vector2 pos_in_grid;
 	SnakeSegment *curr = this->head;
 	if (this->snake_bounds_check()) {
 		return;
 	}
-	int pos_in_grid_x = floor(((curr->pos.x - BORDER_POS.x) / MAP_CELL_SIZE));
-	int pos_in_grid_y = floor(((curr->pos.y - BORDER_POS.y) / MAP_CELL_SIZE));
-
-	pos_in_grid = {(float)pos_in_grid_x, (float)pos_in_grid_y};
-
-	Vector2 pos_back_to_pixels;
-	float pos_back_to_pixels_x = pos_in_grid_x * MAP_CELL_SIZE;
-	float pos_back_to_pixels_y = pos_in_grid_y * MAP_CELL_SIZE;
-	pos_back_to_pixels = {pos_back_to_pixels_x, pos_back_to_pixels_y};
-
-	Vector2 segment_pos = Vector2Add(DYNAMIC_OFFSET(center), pos_back_to_pixels);
-	Vector2 rectangle_pos = Vector2Add(Vector2Add(segment_pos, BORDER_POS), {BORDER_OFFSET + 1, BORDER_OFFSET + 1});
+	Vector2 segment_pos = Vector2Add(DYNAMIC_OFFSET(center), Vector2Subtract(curr->pos, BORDER_POS));
+	Vector2 rectangle_pos = Vector2Add(Vector2Add(segment_pos, BORDER_POS), {BORDER_OFFSET, BORDER_OFFSET});
 	DrawRectangleV(rectangle_pos, {SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE}, GREEN);
 	curr = curr->next;
 
 	while (curr != nullptr) {
-		pos_in_grid_x = floor(((curr->pos.x - BORDER_POS.x) / MAP_CELL_SIZE));
-		pos_in_grid_y = floor(((curr->pos.y - BORDER_POS.y) / MAP_CELL_SIZE));
-
-		pos_in_grid = {(float)pos_in_grid_x, (float)pos_in_grid_y};
-
-		pos_back_to_pixels_x = pos_in_grid_x * MAP_CELL_SIZE;
-		pos_back_to_pixels_y = pos_in_grid_y * MAP_CELL_SIZE;
-		pos_back_to_pixels = {pos_back_to_pixels_x, pos_back_to_pixels_y};
-
-		segment_pos = Vector2Add(DYNAMIC_OFFSET(center), pos_back_to_pixels);
-		rectangle_pos = Vector2Add(Vector2Add(segment_pos, BORDER_POS), {BORDER_OFFSET + 1, BORDER_OFFSET + 1});
+		segment_pos = Vector2Add(DYNAMIC_OFFSET(center), Vector2Subtract(curr->pos, BORDER_POS));
+		rectangle_pos = Vector2Add(Vector2Add(segment_pos, BORDER_POS), {BORDER_OFFSET, BORDER_OFFSET});
 		DrawRectangleV(rectangle_pos, {SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE}, DARKGREEN);
 
 		curr = curr->next;
 	}
 }
 
-bool Snake::is_food_eaten(Rectangle *food) {
-	if (this->head->pos.x + 5 == food->x && this->head->pos.y + 5 == food->y) {
+bool Snake::food_collision_check(Rectangle *food) {
+	if (this->head->pos.x == food->x && this->head->pos.y == food->y) {
 		return true;
 	}
 	return false;
 }
 
 bool Snake::snake_bounds_check() {
-	if (this->head->pos.x + 5 <= BORDER_POS.x ||
+	if (this->head->pos.x < BORDER_POS.x ||
 			this->head->pos.x >= BORDER_POS.x + BORDER_WIDTH ||
-			this->head->pos.y + 5 <= BORDER_POS.y ||
-			this->head->pos.y >= BORDER_HEIGHT + MAP_CELL_SIZE) {
+			this->head->pos.y < BORDER_POS.y ||
+			this->head->pos.y >= BORDER_POS.y + BORDER_HEIGHT) {
 		return true;
 	}
 	return false;
