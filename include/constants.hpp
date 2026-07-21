@@ -32,4 +32,16 @@ constexpr Vector2 SNAKE_STARTING_POSITION = (Vector2){BORDER_POS.x + 360, BORDER
 #define MOVE_INTERNAL 0.15f
 
 #define SCORE_FONT_SIZE 50.0f
+
+constexpr Vector2 PAUSE_TEXT_POS(Vector2 center) {
+	return (Vector2){center.x - 100, center.y};
+}
+
+#define PAUSE_FONT_SIZE 50.0f
+
+#define GAME_INTRO_TEXT "Welcome to supra's snake game!\n"\
+	"Controls: ARROW KEYS OR H, J, K, L (For my fellow Vi users)\n"\
+	"Press <SPACE> to pause/unpause.\nStart moving to start, and enjoy!"
+
+constexpr Vector2 GAME_INTRO_TEXT_POS = {BORDER_POS.x + BORDER_OFFSET, BORDER_POS.y + BORDER_OFFSET};
 #endif

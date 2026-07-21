@@ -1,6 +1,8 @@
 #include "game.hpp"
 #include "constants.hpp"
+#include <raylib.h>
 #include <raymath.h>
+#include <iostream>
 
 Border::Border (Vector2 pos, float thickness, float width, float height) {
 	this->pos = pos;
@@ -38,4 +40,16 @@ Rectangle *Game::spawn_food(Snake *snake) {
 		curr = curr->next;
 	}
 	return new Rectangle({offset_pos.x, offset_pos.y, SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE});
+}
+
+void Game::game_intro_text(Vector2 snake_dir, Vector2 center) {
+	if (!this->game_started) {
+		DrawText(GAME_INTRO_TEXT, GAME_INTRO_TEXT_POS.x + DYNAMIC_OFFSET(center).x, GAME_INTRO_TEXT_POS.y + BORDER_OFFSET + DYNAMIC_OFFSET(center).y, 25, GREEN);
+	}
+
+	if (snake_dir != (Vector2){0, 0} && !game_started) {
+		std::cout << this->game_started << std::endl;
+		std::cout << "Game started" << std::endl;
+		this->game_started = true;
+	}
 }

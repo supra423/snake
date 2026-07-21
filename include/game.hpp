@@ -36,9 +36,11 @@ class Game {
 	public:
 	GameUI *game_ui;
 	int score = 0;
-	bool paused = true;
+	bool paused = false;
+	bool game_started = false;
 	bool food_eaten = false;
 	~Game();
 	Rectangle *spawn_food(Snake *snake);
+	void game_intro_text(Vector2 snake_dir, Vector2 center);
 };
 #endif

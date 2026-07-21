@@ -47,7 +47,8 @@ int main() {
 		center = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
 		score_pos = Vector2Add(DYNAMIC_OFFSET(center), game->game_ui->score_pos);
 		border_pos = Vector2Add(DYNAMIC_OFFSET(center), border->pos);
-		score_string = std::to_string(game->score);
+		score_string = "SCORE: " + std::to_string(game->score);
+		game->game_intro_text(snake->dir, center);
 		if (snake->food_collision_check(food)) {
 			game->food_eaten = true;
 			snake->append();
@@ -58,7 +59,13 @@ int main() {
 		if (game->food_eaten) {
 			food = game->spawn_food(snake);
 			game->food_eaten = false;
-		} else DrawRectangle(food->x + DYNAMIC_OFFSET(center).x + BORDER_OFFSET, food->y + DYNAMIC_OFFSET(center).y + BORDER_OFFSET, food->width, food->height, RED);
+		} else
+			if (game->game_started)
+				DrawRectangle(food->x + DYNAMIC_OFFSET(center).x + BORDER_OFFSET,
+					food->y + DYNAMIC_OFFSET(center).y + BORDER_OFFSET,
+					food->width,
+					food->height, RED);
+		
 
 		if (snake->snake_bounds_check() || snake->snake_self_collision())  {
 			delete snake;
@@ -69,8 +76,20 @@ int main() {
 
 		DrawRectangleLinesEx({border_pos.x, border_pos.y, border->width, border->height}, border->thickness, GREEN);
 		DrawText(score_string.c_str(), score_pos.x, score_pos.y, SCORE_FONT_SIZE, GREEN);
-		snake->change_dir();
-		snake->update();
+
+		if (!game->paused) {
+			snake->change_dir();
+			snake->update();
+		} else {
+			DrawText("PAUSED", PAUSE_TEXT_POS(center).x, PAUSE_TEXT_POS(center).y, PAUSE_FONT_SIZE, GREEN);
+		}
+
+		if (IsKeyPressed(KEY_SPACE) && game->paused == false) {
+			game->paused = true;
+		} else if (IsKeyPressed(KEY_SPACE) && game->paused == true) {
+			game->paused = false;
+		}
+
 		snake->draw(center);
 		EndDrawing();
 	}
