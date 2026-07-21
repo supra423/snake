@@ -1,18 +1,25 @@
 #include "snake.hpp"
+#include "linked_list.hpp"
 #include "constants.hpp"
 #include <raylib.h>
 #include <raymath.h>
 
 SnakeSegment::SnakeSegment() {}
 
+Snake::Snake() {
+	this->snake_body = new LinkedList;
+}
+
 Snake::~Snake() {
-	SnakeSegment *curr = this->head;
-	SnakeSegment *old_curr;
+	Node *curr = this->snake_body->head;
+	Node *old_curr;
 	while (curr != nullptr) {
 		old_curr = curr;
 		curr = curr->next;
+		delete (SnakeSegment *)old_curr->data;
 		delete old_curr;
 	}
+	delete this->snake_body;
 }
 
 void Snake::update() {
@@ -25,21 +32,17 @@ void Snake::update() {
 	}
 }
 
-void Snake::append() {
+void Snake::append_snake() {
 	SnakeSegment *new_segment = new SnakeSegment;
-	new_segment->next = nullptr;
-	if (this->size == 0) {
+	if (this->snake_body->size == 0) {
 		new_segment->pos = SNAKE_STARTING_POSITION;
-		this->head = new_segment;
-		this->tail = new_segment;
-		this->size++;
+		this->snake_body->append(new_segment);
 		return;
 	}
-	new_segment->pos = this->tail->pos;
-	SnakeSegment *old_tail = this->tail;
-	this->tail = new_segment;
-	old_tail->next = new_segment;
-	this->size++;
+	Node *tail = (Node *)this->snake_body->tail;
+	SnakeSegment *snake_tail = (SnakeSegment *)tail->data;
+	new_segment->pos = snake_tail->pos;
+	this->snake_body->append(new_segment);
 }
 
 void Snake::change_dir() {
@@ -55,36 +58,44 @@ void Snake::change_dir() {
 }
 
 void Snake::move() {
-	SnakeSegment *curr = this->head;
-	Vector2 old_curr_pos = curr->pos;
+	Node *curr = this->snake_body->head;
+	SnakeSegment *curr_snake_segment = (SnakeSegment *)curr->data;
+	Vector2 old_curr_pos = curr_snake_segment->pos;
 	Vector2 old_next_pos;
 	this->dir = this->next_dir;
-	this->head->pos.x += this->dir.x * MAP_CELL_SIZE;
-	this->head->pos.y += this->dir.y * MAP_CELL_SIZE;
+	curr_snake_segment->pos.x += this->dir.x * MAP_CELL_SIZE;
+	curr_snake_segment->pos.y += this->dir.y * MAP_CELL_SIZE;
+	SnakeSegment *curr_snake_segment_next;
 
 	while (curr != nullptr) {
 		if (curr->next == nullptr) {
 			return;
 		}
-		old_next_pos = curr->next->pos;
-		curr->next->pos = old_curr_pos;
+		curr_snake_segment_next = (SnakeSegment *)curr->next->data;
+		old_next_pos = curr_snake_segment_next->pos;
+		curr_snake_segment_next->pos = old_curr_pos;
 		curr = curr->next;
 		old_curr_pos = old_next_pos;
 	}
 }
 
 void Snake::draw(Vector2 center) {
-	SnakeSegment *curr = this->head;
-	if (this->snake_bounds_check()) {
+	if (this->snake_bounds_check()) { // prevents drawing after snake hits bounds
 		return;
 	}
-	Vector2 segment_pos = Vector2Add(DYNAMIC_OFFSET(center), Vector2Subtract(curr->pos, BORDER_POS));
+	Node *curr = this->snake_body->head;
+	SnakeSegment *curr_snake_segment = (SnakeSegment *)curr->data;
+	SnakeSegment *curr_snake_segment_next;
+	Vector2 segment_pos = Vector2Add(DYNAMIC_OFFSET(center), Vector2Subtract(curr_snake_segment->pos, BORDER_POS));
 	Vector2 rectangle_pos = Vector2Add(Vector2Add(segment_pos, BORDER_POS), {BORDER_OFFSET, BORDER_OFFSET});
 	DrawRectangleV(rectangle_pos, {SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE}, GREEN);
-	curr = curr->next;
-
 	while (curr != nullptr) {
-		segment_pos = Vector2Add(DYNAMIC_OFFSET(center), Vector2Subtract(curr->pos, BORDER_POS));
+		if (curr->next == nullptr) {
+			return;
+		}
+		curr_snake_segment_next = (SnakeSegment *)curr->next->data;
+		curr_snake_segment = curr_snake_segment_next;
+		segment_pos = Vector2Add(DYNAMIC_OFFSET(center), Vector2Subtract(curr_snake_segment->pos, BORDER_POS));
 		rectangle_pos = Vector2Add(Vector2Add(segment_pos, BORDER_POS), {BORDER_OFFSET, BORDER_OFFSET});
 		DrawRectangleV(rectangle_pos, {SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE}, DARKGREEN);
 
@@ -93,30 +104,37 @@ void Snake::draw(Vector2 center) {
 }
 
 bool Snake::food_collision_check(Rectangle *food) {
-	if (this->head->pos.x == food->x && this->head->pos.y == food->y) {
+	Node *head = this->snake_body->head;
+	SnakeSegment *snake_head = (SnakeSegment *)head->data;
+	if (snake_head->pos.x == food->x && snake_head->pos.y == food->y) {
 		return true;
 	}
 	return false;
 }
 
 bool Snake::snake_bounds_check() {
-	if (this->head->pos.x < BORDER_POS.x ||
-			this->head->pos.x >= BORDER_POS.x + BORDER_WIDTH ||
-			this->head->pos.y < BORDER_POS.y ||
-			this->head->pos.y >= BORDER_POS.y + BORDER_HEIGHT) {
+	Node *head = this->snake_body->head;
+	SnakeSegment *snake_head = (SnakeSegment *)head->data;
+	if (snake_head->pos.x < BORDER_POS.x ||
+			snake_head->pos.x >= BORDER_POS.x + BORDER_WIDTH ||
+			snake_head->pos.y < BORDER_POS.y ||
+			snake_head->pos.y >= BORDER_POS.y + BORDER_HEIGHT) {
 		return true;
 	}
 	return false;
 }
 
 bool Snake::snake_self_collision() {
-	if (this->size <= 2) {
+	if (this->snake_body->size <= 2) {
 		return false;
 	}
-	SnakeSegment *curr = this->head;
+	Node *curr = this->snake_body->head;
+	SnakeSegment *curr_snake_segment = (SnakeSegment *)curr->data;
+	SnakeSegment *curr_snake_segment_next;
 	while (curr != nullptr) {
 		if (curr->next == nullptr) return false;
-		if (this->head->pos == curr->next->pos) {
+		curr_snake_segment_next = (SnakeSegment *)curr->next->data;
+		if (curr_snake_segment->pos == curr_snake_segment_next->pos) {
 			return true;
 		}
 		curr = curr->next;

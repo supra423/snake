@@ -1,34 +1,33 @@
 #ifndef SNAKE_HPP
 #define SNAKE_HPP
-// I figured that the snake is actually a linked list.
-// Well, I could definitely use std::deque for this but
-// I'm bored, and severely autistic
+#include "linked_list.hpp"
 #include <raylib.h>
 #include <stdlib.h>
 
 class SnakeSegment {
 	public:
 	Vector2 pos;
-	SnakeSegment *next;
 	SnakeSegment(Vector2 pos) {
 		this->pos = pos;
 	}
 	SnakeSegment();
 };
 
-class Snake {
+class Snake { // my problem with this implementation, is that it merges to concept of linkedlist and the snake
+			  // I want to make it so that it is separate, so that it makes it more scalable.
+			  // I want to use the linked list for other things, like for example, multiple food spawns
+			  // I don't want to use the snake for the "food group"
 	public:
-	SnakeSegment *head;
-	SnakeSegment *tail;
+	LinkedList *snake_body;
 	Vector2 dir = {0, 0};
 	Vector2 next_dir = {0, 0};
-	size_t size = 0;
 	double last_update_time = 0.0;
 	float move_timer = 0.0f;
 
+	Snake();
 	~Snake();
 	void update();
-	void append();
+	void append_snake();
 	void change_dir();
 	void move();
 	void draw(Vector2 center);
