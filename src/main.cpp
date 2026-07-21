@@ -67,7 +67,7 @@ int main() {
 					food->height, RED);
 		
 
-		if (snake->snake_bounds_check() /*|| snake->snake_self_collision()*/)  {
+		if (snake->snake_bounds_check() || snake->snake_self_collision())  {
 			delete snake;
 			snake = new Snake;
 			snake->append_snake();
