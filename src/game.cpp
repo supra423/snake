@@ -1,8 +1,8 @@
 #include "game.hpp"
 #include "constants.hpp"
+#include "snake.hpp"
 #include <raylib.h>
 #include <raymath.h>
-#include <iostream>
 
 Border::Border (Vector2 pos, float thickness, float width, float height) {
 	this->pos = pos;
@@ -25,13 +25,17 @@ Rectangle *Game::spawn_food(Snake *snake) {
 	int col = GetRandomValue(1, COLS);
 	Vector2 grid_pos_to_pixel = {row * (float)MAP_CELL_SIZE - (float)MAP_CELL_SIZE, col * (float)MAP_CELL_SIZE - (float)MAP_CELL_SIZE};
 	Vector2 offset_pos = Vector2Add(grid_pos_to_pixel, BORDER_POS);
-	SnakeSegment *curr = snake->head;
+	Node *curr = snake->snake_body->head;
+	SnakeSegment *curr_snake_segment = (SnakeSegment *)curr->data;
+	SnakeSegment *curr_snake_segment_next;
 	while (curr != nullptr) {
 		if (curr->next == nullptr) {
 			break;
 		}
-		if (offset_pos == (Vector2){curr->pos.x, curr->pos.y}) { // repositions the food if it overlaps with snake
-			curr = snake->head; // resets the curr to make sure it scans the entire snake
+		curr_snake_segment_next = (SnakeSegment *)curr->next->data;
+		curr_snake_segment = curr_snake_segment_next;
+		if (offset_pos == (Vector2){curr_snake_segment->pos.x, curr_snake_segment->pos.y}) { // repositions the food if it overlaps with snake
+			curr = snake->snake_body->head; // resets the curr to make sure it scans the entire snake
 			row = GetRandomValue(1, ROWS);
 			col = GetRandomValue(1, COLS);
 			grid_pos_to_pixel = {row * (float)MAP_CELL_SIZE - (float)MAP_CELL_SIZE, col * (float)MAP_CELL_SIZE - (float)MAP_CELL_SIZE};
@@ -48,8 +52,6 @@ void Game::game_intro_text(Vector2 snake_dir, Vector2 center) {
 	}
 
 	if (snake_dir != (Vector2){0, 0} && !game_started) {
-		std::cout << this->game_started << std::endl;
-		std::cout << "Game started" << std::endl;
 		this->game_started = true;
 	}
 }

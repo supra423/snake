@@ -34,7 +34,7 @@ int main() {
 	Vector2 border_pos;
 	Border *border = game->game_ui->border;
 	Snake *snake = new Snake;
-	snake->append();
+	snake->append_snake();
 	Rectangle *food = game->spawn_food(snake);
 	game->food_eaten = false;
 	game->game_ui->score_pos = {BORDER_POS.x, BORDER_POS.y + BORDER_HEIGHT};
@@ -51,7 +51,7 @@ int main() {
 		game->game_intro_text(snake->dir, center);
 		if (snake->food_collision_check(food)) {
 			game->food_eaten = true;
-			snake->append();
+			snake->append_snake();
 			game->score++;
 			delete food;
 		}
@@ -67,10 +67,10 @@ int main() {
 					food->height, RED);
 		
 
-		if (snake->snake_bounds_check() || snake->snake_self_collision())  {
+		if (snake->snake_bounds_check() /*|| snake->snake_self_collision()*/)  {
 			delete snake;
 			snake = new Snake;
-			snake->append();
+			snake->append_snake();
 			game->score = 0;
 		}
 
