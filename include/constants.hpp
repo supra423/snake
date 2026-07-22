@@ -14,6 +14,8 @@ constexpr Vector2 BORDER_POS = (Vector2){(DEFAULT_WINDOW_WIDTH - BORDER_WIDTH) /
 #define ROWS 20
 #define COLS 20
 
+constexpr size_t MAX_AMOUNT_OF_CELLS = ROWS * COLS;
+
 constexpr int MAP_CELL_SIZE = ((BORDER_WIDTH / ROWS) + (BORDER_HEIGHT / COLS)) / 2;
 #define INNER_CELL_SIZE 32.0f
 
@@ -42,6 +44,8 @@ constexpr Vector2 PAUSE_TEXT_POS(Vector2 center) {
 #define GAME_INTRO_TEXT "Welcome to supra's snake game!\n"\
 	"Controls: ARROW KEYS OR H, J, K, L (For my fellow Vi users)\n"\
 	"Press <SPACE> to pause/unpause.\nStart moving to start, and enjoy!"
+
+#define MAX_FOOD_GROUP_SIZE 5
 
 constexpr Vector2 GAME_INTRO_TEXT_POS = {BORDER_POS.x + BORDER_OFFSET, BORDER_POS.y + BORDER_OFFSET};
 #endif

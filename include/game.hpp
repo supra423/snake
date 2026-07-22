@@ -35,12 +35,18 @@ class GameUI {
 class Game {
 	public:
 	GameUI *game_ui;
+	LinkedList *food_group;
 	int score = 0;
 	bool paused = false;
 	bool game_started = false;
 	bool food_eaten = false;
 	~Game();
+	Game();
 	Rectangle *spawn_food(Snake *snake);
+	void spawn_food_group(Snake *snake);
 	void game_intro_text(Vector2 snake_dir, Vector2 center);
+	void draw_foods(Vector2 center);
+	void food_group_collision_check(Snake *snake);
+	void handle_empty_food_group(Snake *snake);
 };
 #endif

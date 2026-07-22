@@ -13,10 +13,7 @@ class SnakeSegment {
 	SnakeSegment();
 };
 
-class Snake { // my problem with this implementation, is that it merges to concept of linkedlist and the snake
-			  // I want to make it so that it is separate, so that it makes it more scalable.
-			  // I want to use the linked list for other things, like for example, multiple food spawns
-			  // I don't want to use the snake for the "food group"
+class Snake {
 	public:
 	LinkedList *snake_body;
 	Vector2 dir = {0, 0};

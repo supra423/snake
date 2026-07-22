@@ -85,21 +85,17 @@ void Snake::draw(Vector2 center) {
 	}
 	Node *curr = this->snake_body->head;
 	SnakeSegment *curr_snake_segment = (SnakeSegment *)curr->data;
-	SnakeSegment *curr_snake_segment_next;
 	Vector2 segment_pos = Vector2Add(DYNAMIC_OFFSET(center), Vector2Subtract(curr_snake_segment->pos, BORDER_POS));
 	Vector2 rectangle_pos = Vector2Add(Vector2Add(segment_pos, BORDER_POS), {BORDER_OFFSET, BORDER_OFFSET});
 	DrawRectangleV(rectangle_pos, {SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE}, GREEN);
+	curr = curr->next; // jump to next segment to avoid drawing the head again
 	while (curr != nullptr) {
-		if (curr->next == nullptr) {
-			return;
-		}
-		curr_snake_segment_next = (SnakeSegment *)curr->next->data;
-		curr_snake_segment = curr_snake_segment_next;
+		curr_snake_segment = (SnakeSegment *)curr->data;
 		segment_pos = Vector2Add(DYNAMIC_OFFSET(center), Vector2Subtract(curr_snake_segment->pos, BORDER_POS));
 		rectangle_pos = Vector2Add(Vector2Add(segment_pos, BORDER_POS), {BORDER_OFFSET, BORDER_OFFSET});
 		DrawRectangleV(rectangle_pos, {SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE}, DARKGREEN);
-
 		curr = curr->next;
+
 	}
 }
 

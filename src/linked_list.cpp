@@ -1,5 +1,4 @@
 #include "linked_list.hpp"
-#include <cstring>
 
 LinkedList::LinkedList() {
 	this->head = nullptr;
@@ -22,4 +21,42 @@ void LinkedList::append(void *data) {
 	this->size++;
 }
 
-LinkedList::~LinkedList() {}
+void LinkedList::delete_node(Node *node) {
+	if (this->size == 0 || node == nullptr) return;
+	Node *node_to_be_deleted;
+	if (node == this->head) {
+		node_to_be_deleted = this->head;
+		if (this->size == 1) {
+			this->tail = nullptr;
+			this->head = nullptr;
+			delete node_to_be_deleted;
+			this->size--;
+			return;
+		}
+		this->head = this->head->next;
+		delete node_to_be_deleted;
+		this->size--;
+		return;
+	}
+	Node *curr = this->head;
+
+	while (curr != nullptr) {
+		if (curr->next == nullptr) return;
+		if (curr->next == node && node == this->tail) {
+			node_to_be_deleted = curr->next;
+			this->tail = curr;
+			delete node_to_be_deleted;
+			curr->next = nullptr;
+			this->size--;
+			return;
+		}
+		if (curr->next == node) {
+			node_to_be_deleted = curr->next;
+			curr->next = curr->next->next;
+			delete node_to_be_deleted;
+			this->size--;
+			return;
+		}
+		curr = curr->next;
+	}
+}

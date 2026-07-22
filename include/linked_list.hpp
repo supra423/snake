@@ -20,7 +20,7 @@ class LinkedList {
 	Node *tail;	
 	size_t size = 0;
 	LinkedList();
-	~LinkedList();
 	void append(void *data);
+	void delete_node(Node *node);
 };
 #endif

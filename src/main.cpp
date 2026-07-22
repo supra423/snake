@@ -35,7 +35,6 @@ int main() {
 	Border *border = game->game_ui->border;
 	Snake *snake = new Snake;
 	snake->append_snake();
-	Rectangle *food = game->spawn_food(snake);
 	game->food_eaten = false;
 	game->game_ui->score_pos = {BORDER_POS.x, BORDER_POS.y + BORDER_HEIGHT};
 	std::string score_string;
@@ -49,22 +48,9 @@ int main() {
 		border_pos = Vector2Add(DYNAMIC_OFFSET(center), border->pos);
 		score_string = "SCORE: " + std::to_string(game->score);
 		game->game_intro_text(snake->dir, center);
-		if (snake->food_collision_check(food)) {
-			game->food_eaten = true;
-			snake->append_snake();
-			game->score++;
-			delete food;
-		}
-
-		if (game->food_eaten) {
-			food = game->spawn_food(snake);
-			game->food_eaten = false;
-		} else
-			if (game->game_started)
-				DrawRectangle(food->x + DYNAMIC_OFFSET(center).x + BORDER_OFFSET,
-					food->y + DYNAMIC_OFFSET(center).y + BORDER_OFFSET,
-					food->width,
-					food->height, RED);
+		game->handle_empty_food_group(snake);
+		game->food_group_collision_check(snake);
+		game->draw_foods(center);
 		
 
 		if (snake->snake_bounds_check() || snake->snake_self_collision())  {
@@ -94,7 +80,6 @@ int main() {
 		EndDrawing();
 	}
 	delete game;
-	delete food;
 	delete snake;
 	CloseWindow();
 	return 0;
