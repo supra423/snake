@@ -51,7 +51,6 @@ int main() {
 		game->handle_empty_food_group(snake);
 		game->food_group_collision_check(snake);
 		game->draw_foods(center);
-		
 
 		if (snake->snake_bounds_check() || snake->snake_self_collision())  {
 			delete snake;

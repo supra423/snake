@@ -42,7 +42,7 @@ class Game {
 	bool food_eaten = false;
 	~Game();
 	Game();
-	Rectangle *spawn_food(Snake *snake);
+	Rectangle *spawn_food(Snake *snake, int i);
 	void spawn_food_group(Snake *snake);
 	void game_intro_text(Vector2 snake_dir, Vector2 center);
 	void draw_foods(Vector2 center);

@@ -35,33 +35,41 @@ Game::~Game() {
 
 Vector2 food_pos[MAX_FOOD_GROUP_SIZE]; // this array is used to check for food overlaps
 
-Rectangle *Game::spawn_food(Snake *snake) {
+Rectangle *Game::spawn_food(Snake *snake, int i) {
 	int col = GetRandomValue(1, COLS);
 	int row = GetRandomValue(1, ROWS);
-	food_pos[0] = {(float)col, (float)row};
 	Vector2 grid_pos_to_pixel = {row * (float)MAP_CELL_SIZE - (float)MAP_CELL_SIZE, col * (float)MAP_CELL_SIZE - (float)MAP_CELL_SIZE};
 	Vector2 offset_pos = Vector2Add(grid_pos_to_pixel, BORDER_POS);
-	Node *curr_snake = snake->snake_body->head;
-	SnakeSegment *curr_snake_segment = (SnakeSegment *)curr_snake->data;
-	int i = 0;
-	while (curr_snake != nullptr) {
-		curr_snake_segment = (SnakeSegment *)curr_snake->data;
-		if (offset_pos == (Vector2){curr_snake_segment->pos.x, curr_snake_segment->pos.y}) { // repositions the food if it overlaps with snake
-			curr_snake = snake->snake_body->head; // resets the curr to make sure it scans the entire snake
+	Node *curr_snake;
+	SnakeSegment *curr_snake_segment;
+	bool overlap;
+	do {
+		overlap = false;
+		curr_snake = snake->snake_body->head;
+		while (curr_snake != nullptr) {
+			curr_snake_segment = (SnakeSegment *)curr_snake->data;
+			if (Vector2Equals(offset_pos, curr_snake_segment->pos)) { // repositions the food if it overlaps with snake
+				overlap = true;
+				break; // while loop breaks and immediately proceeds to scanning food array
+			}
+			curr_snake = curr_snake->next;
+		}
+		if (!overlap) { // skip if there is no overlap
+			for (int j = 0; j < i; j++) {
+				if (Vector2Equals((Vector2){(float)col, (float)row}, food_pos[j])) {
+					overlap = true;
+					break;
+				}
+			}
+		}
+		if (overlap) {
 			row = GetRandomValue(1, ROWS);
 			col = GetRandomValue(1, COLS);
-			i++;
-			food_pos[i] = {(float)col, (float)row};
-			while (Vector2Equals((Vector2){(float)col, (float)row}, food_pos[i])) {
-		 	// continously checks and reassigns row and col if there are overlaps between each food
-				row = GetRandomValue(1, ROWS);
-				col = GetRandomValue(1, COLS);
-			}
 			grid_pos_to_pixel = {row * (float)MAP_CELL_SIZE - (float)MAP_CELL_SIZE, col * (float)MAP_CELL_SIZE - (float)MAP_CELL_SIZE};
 			offset_pos = Vector2Add(grid_pos_to_pixel, BORDER_POS);
 		}
-		curr_snake = curr_snake->next;
-	}
+	} while (overlap);
+	food_pos[i] = {(float)col, (float)row};
 	return new Rectangle({offset_pos.x, offset_pos.y, SNAKE_SEGMENT_SIZE, SNAKE_SEGMENT_SIZE});
 }
 
@@ -74,7 +82,7 @@ void Game::spawn_food_group(Snake *snake) {
 	}
 
 	for (int i = 0; i < amount_to_generate; i++) {
-		new_food = this->spawn_food(snake);
+		new_food = this->spawn_food(snake, i);
 		food_group->append(new_food);
 	}
 	this->food_group->size = amount_to_generate;
